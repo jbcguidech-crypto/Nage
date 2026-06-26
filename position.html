@@ -10,7 +10,7 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="Nage">
+<meta name="apple-mobile-web-app-title" content="swimrun">
 <title>Bloc Position · Flotter haut, glisser loin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -142,12 +142,21 @@
   .backlink:hover{color:var(--aqua)}
   .backlink svg{width:14px;height:14px}
   .hero{padding-top:calc(34px + env(safe-area-inset-top))}
+  .ibar{position:fixed;left:12px;right:12px;bottom:12px;z-index:60;display:flex;align-items:center;gap:12px;background:#0e3a45;border:1px solid var(--line);border-radius:16px;padding:12px 12px calc(12px + env(safe-area-inset-bottom)) 14px;box-shadow:0 14px 40px rgba(0,0,0,.55);transform:translateY(180%);transition:transform .38s cubic-bezier(.2,.8,.2,1)}
+  .ibar.show{transform:translateY(0)}
+  .ibar img{width:40px;height:40px;border-radius:10px;flex:0 0 auto}
+  .ibar .it{flex:1;min-width:0}
+  .ibar .it b{font-family:var(--display);font-weight:700;font-size:.98rem;display:block;line-height:1.12;color:var(--foam)}
+  .ibar .it span{color:var(--mist);font-size:.78rem;display:block}
+  .ibar .go{font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--deep);background:var(--aqua);border:none;border-radius:11px;padding:10px 16px;cursor:pointer;flex:0 0 auto}
+  .ibar .x{flex:0 0 auto;background:transparent;border:none;color:var(--mist);font-size:1.5rem;line-height:1;padding:2px 8px;cursor:pointer}
+  @media(min-width:760px){.ibar{left:auto;right:24px;max-width:390px}}
 </style>
 </head>
 <body>
 
 <header class="hero">
-  <a href="./index.html" class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>Nage</a>
+  <a href="./index.html" class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>swimrun</a>
   <div class="eyebrow">Module technique · 3 semaines</div>
   <h1>Flotter haut<br><span class="below">glisser loin</span></h1>
   <p class="lede">Le moteur, tu l'as. Ce qui te coûte des secondes au 100 m, c'est la position et la distance par coup. Trois semaines pour effacer le frein avant de chercher la vitesse.</p>
@@ -337,5 +346,23 @@ const el=document.getElementById('eduList');
 educatifs.forEach(e=>{const d=document.createElement('details');d.className='edu';d.innerHTML=`<summary><span class="ec">${e.k}</span>${e.t}<span class="plus">+</span></summary><div class="edu-d">${e.d}</div>`;el.appendChild(d);});
 </script>
 <script>if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}</script>
+<div class="ibar" id="ibar" role="dialog" aria-label="Installer swimrun">
+  <img src="./favicon.svg" alt="">
+  <div class="it"><b>Installer swimrun</b><span>Accès rapide et hors-ligne depuis ton écran d'accueil</span></div>
+  <button class="go" id="ibarGo">Installer</button>
+  <button class="x" id="ibarX" aria-label="Fermer">&times;</button>
+</div>
+<script>
+(function(){
+  var bar=document.getElementById('ibar'),go=document.getElementById('ibarGo'),x=document.getElementById('ibarX');
+  if(!bar)return;
+  var deferred=null,dismissed=false;
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(!standalone&&!dismissed)bar.classList.add('show');});
+  go.addEventListener('click',async function(){if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;bar.classList.remove('show');});
+  x.addEventListener('click',function(){dismissed=true;bar.classList.remove('show');});
+  window.addEventListener('appinstalled',function(){bar.classList.remove('show');});
+})();
+</script>
 </body>
 </html>

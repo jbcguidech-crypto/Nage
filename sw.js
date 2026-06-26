@@ -1,9 +1,10 @@
-// Nage — service worker
-const CACHE = 'nage-v1';
+// swimrun — service worker
+const CACHE = 'swimrun-v2';
 const SHELL = [
   './',
   './index.html',
-  './swimrun.html',
+  './swim.html',
+  './run.html',
   './position.html',
   './manifest.webmanifest',
   './favicon.svg',
@@ -28,7 +29,6 @@ self.addEventListener('fetch', (e) => {
   const req = e.request;
   if (req.method !== 'GET') return;
 
-  // Navigations : réseau d'abord, repli sur le cache (utile hors-ligne)
   if (req.mode === 'navigate') {
     e.respondWith(
       fetch(req).then((res) => {
@@ -40,7 +40,6 @@ self.addEventListener('fetch', (e) => {
     return;
   }
 
-  // Reste (icônes, polices Google, etc.) : cache d'abord, sinon réseau + mise en cache
   e.respondWith(
     caches.match(req).then((cached) =>
       cached || fetch(req).then((res) => {

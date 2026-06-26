@@ -1,7 +1,7 @@
 {
-  "name": "Nage",
-  "short_name": "Nage",
-  "description": "Programmes de natation eau libre & technique, séance par séance.",
+  "name": "swimrun",
+  "short_name": "swimrun",
+  "description": "Nager, courir, enchaîner. Programmes natation, course et technique, séance par séance.",
   "lang": "fr",
   "start_url": "./index.html",
   "scope": "./",

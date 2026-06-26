@@ -1,0 +1,366 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
+<meta name="theme-color" content="#08252e">
+<link rel="manifest" href="./manifest.webmanifest">
+<link rel="icon" type="image/svg+xml" href="./favicon.svg">
+<link rel="apple-touch-icon" href="./apple-touch-icon.png">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+<meta name="apple-mobile-web-app-title" content="swimrun">
+<title>Cap swimrun · Course</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,500;12..96,700;12..96,800&family=Spline+Sans:wght@400;500;600&family=Spline+Sans+Mono:wght@400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --deep:#08252e;--lake:#0e3a45;--lake-2:#14525f;
+    --aqua:#6fd6c9;--surface:#bfede6;--air:#f0b860;
+    --foam:#e9f5f2;--mist:#8fb0ae;--line:rgba(111,214,201,.18);
+    --display:'Bricolage Grotesque',sans-serif;--body:'Spline Sans',sans-serif;--mono:'Spline Sans Mono',monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--deep);color:var(--foam);font-family:var(--body);line-height:1.55;-webkit-font-smoothing:antialiased;overflow-x:hidden}
+  ::selection{background:var(--aqua);color:var(--deep)}
+  .hero{position:relative;padding:34px 22px 0;background:linear-gradient(180deg,#0a2e38 0%,var(--deep) 100%);overflow:hidden}
+  .eyebrow{font-family:var(--mono);font-size:.72rem;letter-spacing:.22em;text-transform:uppercase;color:var(--aqua);display:flex;align-items:center;gap:9px}
+  .eyebrow::before{content:"";width:26px;height:1px;background:var(--aqua);display:inline-block}
+  .hero h1{font-family:var(--display);font-weight:800;font-size:clamp(2.5rem,11vw,4.2rem);line-height:.96;letter-spacing:-.02em;margin:18px 0 6px}
+  .hero h1 .below{color:var(--aqua)}
+  .hero .lede{color:var(--mist);font-size:1rem;max-width:42ch;margin-bottom:30px}
+  .wave-wrap{position:relative;height:64px;margin:0 -22px;line-height:0}
+  .wave-wrap svg{display:block;width:200%;height:64px}
+  .w1{animation:drift 14s linear infinite}.w2{animation:drift 9s linear infinite reverse;opacity:.5}
+  @keyframes drift{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+  .principes{background:var(--lake);padding:26px 22px 30px}
+  .sec-label{font-family:var(--mono);font-size:.7rem;letter-spacing:.18em;text-transform:uppercase;color:var(--mist);margin-bottom:16px}
+  .princ-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(140px,1fr));gap:10px}
+  .princ{border:1px solid var(--line);border-radius:14px;padding:14px 14px 16px;background:rgba(111,214,201,.04)}
+  .princ .num{font-family:var(--mono);font-size:.7rem;color:var(--aqua)}
+  .princ h3{font-family:var(--display);font-weight:700;font-size:1.05rem;margin:4px 0 3px}
+  .princ p{font-size:.82rem;color:var(--mist);line-height:1.4}
+  .arc{padding:30px 22px 6px}
+  .arc h2{font-family:var(--display);font-weight:700;font-size:1.4rem;letter-spacing:-.01em;margin-bottom:4px}
+  .arc .sub{color:var(--mist);font-size:.9rem;margin-bottom:20px}
+  .blocs{display:flex;flex-direction:column;gap:8px;margin-bottom:8px}
+  .bloc-row{display:flex;align-items:center;gap:14px;border-left:3px solid var(--bc,var(--aqua));padding:9px 0 9px 14px}
+  .bloc-row .wks{font-family:var(--mono);font-size:.72rem;color:var(--mist);min-width:70px}
+  .bloc-row .bt{font-family:var(--display);font-weight:600;font-size:1rem}
+  .bloc-row .bd{color:var(--mist);font-size:.82rem;display:block}
+  .weeknav{position:sticky;top:0;z-index:20;background:rgba(8,37,46,.92);backdrop-filter:blur(10px);border-top:1px solid var(--line);border-bottom:1px solid var(--line);padding:12px 14px;display:flex;gap:8px;overflow-x:auto;-webkit-overflow-scrolling:touch;scrollbar-width:none}
+  .weeknav::-webkit-scrollbar{display:none}
+  .wchip{flex:0 0 auto;font-family:var(--mono);font-size:.82rem;font-weight:500;color:var(--mist);background:transparent;border:1px solid var(--line);border-radius:999px;padding:8px 15px;cursor:pointer;transition:all .18s ease;white-space:nowrap}
+  .wchip[data-bloc] .dot{display:inline-block;width:7px;height:7px;border-radius:50%;margin-right:7px;vertical-align:middle}
+  .wchip:hover{color:var(--foam);border-color:var(--aqua)}
+  .wchip.active{background:var(--aqua);color:var(--deep);border-color:var(--aqua);font-weight:600}
+  .wchip.active .dot{background:var(--deep)!important}
+  .panel{padding:24px 22px 10px;animation:fade .35s ease}
+  @keyframes fade{from{opacity:0;transform:translateY(8px)}to{opacity:1;transform:none}}
+  .wk-head{display:flex;align-items:baseline;gap:12px;margin-bottom:4px}
+  .wk-head .big{font-family:var(--display);font-weight:800;font-size:2.6rem;letter-spacing:-.03em;line-height:1;color:var(--bcur,var(--aqua))}
+  .wk-head .theme{font-family:var(--display);font-weight:600;font-size:1.25rem;line-height:1.05}
+  .wk-bloc{font-family:var(--mono);font-size:.7rem;letter-spacing:.16em;text-transform:uppercase;color:var(--mist);margin-bottom:18px}
+  .focus{border:1px solid var(--line);border-left:3px solid var(--air);border-radius:0 12px 12px 0;background:rgba(240,184,96,.06);padding:12px 16px;margin-bottom:24px}
+  .focus .lab{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--air);margin-bottom:3px}
+  .focus p{font-size:.95rem}
+  .session{border:1px solid var(--line);border-radius:16px;margin-bottom:16px;overflow:hidden;background:rgba(20,82,95,.18)}
+  .ses-head{display:flex;align-items:center;gap:12px;padding:15px 16px;cursor:pointer;user-select:none}
+  .check{flex:0 0 auto;width:24px;height:24px;border-radius:50%;border:1.5px solid var(--mist);display:flex;align-items:center;justify-content:center;transition:all .18s ease}
+  .check svg{width:13px;height:13px;opacity:0;transform:scale(.5);transition:all .18s ease}
+  .session.done .check{background:var(--aqua);border-color:var(--aqua)}
+  .session.done .check svg{opacity:1;transform:scale(1)}
+  .ses-head .tag{font-family:var(--mono);font-size:.68rem;color:var(--aqua);letter-spacing:.08em}
+  .ses-head .title{font-family:var(--display);font-weight:600;font-size:1.08rem;flex:1;line-height:1.15}
+  .session.done .title{color:var(--mist);text-decoration:line-through;text-decoration-color:var(--line)}
+  .chev{flex:0 0 auto;color:var(--mist);transition:transform .25s ease}
+  .session.open .chev{transform:rotate(180deg)}
+  .ses-body{max-height:0;overflow:hidden;transition:max-height .4s ease}
+  .session.open .ses-body{max-height:1400px}
+  .ses-inner{padding:0 16px 18px}
+  .cue{font-style:italic;color:var(--surface);font-size:.9rem;padding:11px 14px;margin-bottom:16px;border-radius:10px;background:rgba(111,214,201,.07)}
+  .cue::before{content:"\201C";font-family:var(--display);font-size:1.3rem;color:var(--aqua);margin-right:2px}
+  .cue::after{content:"\201D";font-family:var(--display);font-size:1.3rem;color:var(--aqua)}
+  .part{margin-bottom:15px}.part:last-child{margin-bottom:0}
+  .part .plab{font-family:var(--mono);font-size:.68rem;letter-spacing:.12em;text-transform:uppercase;color:var(--aqua);margin-bottom:7px;display:flex;align-items:center;gap:8px}
+  .part .plab::after{content:"";flex:1;height:1px;background:var(--line)}
+  .part ul{list-style:none}
+  .part li{font-size:.9rem;padding:5px 0 5px 18px;position:relative;color:var(--foam);border-bottom:1px solid rgba(111,214,201,.07)}
+  .part li:last-child{border-bottom:none}
+  .part li::before{content:"";position:absolute;left:0;top:13px;width:6px;height:6px;border-radius:50%;background:var(--lake-2);border:1px solid var(--aqua)}
+  .part li b{font-family:var(--mono);font-weight:600;color:var(--surface);font-size:.86rem}
+  .lac{border:1px dashed rgba(240,184,96,.4);border-radius:14px;padding:16px;margin:6px 0 4px;background:rgba(8,37,46,.5)}
+  .lac .lab{font-family:var(--mono);font-size:.66rem;letter-spacing:.16em;text-transform:uppercase;color:var(--air);margin-bottom:6px;display:flex;align-items:center;gap:8px}
+  .lac .lab svg{width:15px;height:15px}
+  .lac p{font-size:.9rem;color:var(--surface)}
+  .glossary{padding:26px 22px 40px}
+  .glossary h2{font-family:var(--display);font-weight:700;font-size:1.4rem;margin-bottom:4px}
+  .glossary .sub{color:var(--mist);font-size:.9rem;margin-bottom:18px}
+  .edu{border-bottom:1px solid var(--line)}
+  .edu summary{list-style:none;cursor:pointer;padding:14px 2px;display:flex;align-items:center;gap:12px;font-family:var(--display);font-weight:600;font-size:1.02rem}
+  .edu summary::-webkit-details-marker{display:none}
+  .edu summary .plus{margin-left:auto;color:var(--aqua);font-size:1.3rem;transition:transform .2s ease;line-height:1}
+  .edu[open] summary .plus{transform:rotate(45deg)}
+  .edu .edu-d{padding:0 2px 16px 36px;color:var(--mist);font-size:.9rem}
+  .edu .ec{display:inline-flex;width:26px;height:24px;border-radius:7px;background:rgba(111,214,201,.12);color:var(--aqua);align-items:center;justify-content:center;font-family:var(--mono);font-size:.72rem;flex:0 0 auto;padding:0 4px}
+  footer{padding:26px 22px 40px;border-top:1px solid var(--line);color:var(--mist);font-size:.8rem}
+  footer b{color:var(--surface);font-weight:600}
+  @media (min-width:760px){.hero,.principes,.arc,.glossary,.panel{padding-left:max(22px,calc((100vw - 720px)/2));padding-right:max(22px,calc((100vw - 720px)/2))}.weeknav{padding-left:max(14px,calc((100vw - 720px)/2));padding-right:max(14px,calc((100vw - 720px)/2))}}
+  @media (prefers-reduced-motion:reduce){*{animation:none!important;transition:none!important;scroll-behavior:auto}}
+  :focus-visible{outline:2px solid var(--aqua);outline-offset:2px;border-radius:6px}
+  .backlink{display:inline-flex;align-items:center;gap:7px;font-family:var(--mono);font-size:.72rem;letter-spacing:.14em;text-transform:uppercase;color:var(--mist);text-decoration:none;transition:color .2s;margin-bottom:6px}
+  .backlink:hover{color:var(--aqua)}
+  .backlink svg{width:14px;height:14px}
+  .hero{padding-top:calc(34px + env(safe-area-inset-top))}
+  .ibar{position:fixed;left:12px;right:12px;bottom:12px;z-index:60;display:flex;align-items:center;gap:12px;background:#0e3a45;border:1px solid var(--line);border-radius:16px;padding:12px 12px calc(12px + env(safe-area-inset-bottom)) 14px;box-shadow:0 14px 40px rgba(0,0,0,.55);transform:translateY(180%);transition:transform .38s cubic-bezier(.2,.8,.2,1)}
+  .ibar.show{transform:translateY(0)}
+  .ibar img{width:40px;height:40px;border-radius:10px;flex:0 0 auto}
+  .ibar .it{flex:1;min-width:0}
+  .ibar .it b{font-family:var(--display);font-weight:700;font-size:.98rem;display:block;line-height:1.12;color:var(--foam)}
+  .ibar .it span{color:var(--mist);font-size:.78rem;display:block}
+  .ibar .go{font-family:var(--display);font-weight:600;font-size:.9rem;color:var(--deep);background:var(--aqua);border:none;border-radius:11px;padding:10px 16px;cursor:pointer;flex:0 0 auto}
+  .ibar .x{flex:0 0 auto;background:transparent;border:none;color:var(--mist);font-size:1.5rem;line-height:1;padding:2px 8px;cursor:pointer}
+  @media(min-width:760px){.ibar{left:auto;right:24px;max-width:390px}}
+</style>
+</head>
+<body>
+
+<header class="hero">
+  <a href="./index.html" class="backlink"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M19 12H5M11 6l-6 6 6 6"/></svg>swimrun</a>
+  <div class="eyebrow">Programme · 6 semaines</div>
+  <h1>Cap swimrun<br><span class="below">la course</span></h1>
+  <p class="lede">Construire un moteur qui tourne en aisance, savoir courir les jambes vidées juste après l'eau, et encaisser le dénivelé. Du footing tranquille à l'enchaînement course-nage.</p>
+  <div class="wave-wrap" aria-hidden="true">
+    <svg viewBox="0 0 1200 64" preserveAspectRatio="none">
+      <path class="w2" fill="#14525f" d="M0,30 C150,55 300,5 600,30 C900,55 1050,5 1200,30 L1200,64 L0,64 Z M1200,30 C1350,55 1500,5 1800,30 C2100,55 2250,5 2400,30 L2400,64 L1200,64 Z"/>
+      <path class="w1" fill="#08252e" d="M0,38 C200,18 400,58 600,38 C800,18 1000,58 1200,38 L1200,64 L0,64 Z M1200,38 C1400,18 1600,58 1800,38 C2000,18 2200,58 2400,38 L2400,64 L1200,64 Z"/>
+    </svg>
+  </div>
+</header>
+
+<section class="principes">
+  <div class="sec-label">Le fil rouge</div>
+  <div class="princ-grid">
+    <div class="princ"><div class="num">01</div><h3>Courir en aisance</h3><p>La base se construit en zone facile, capable de parler. 80 % du volume ici.</p></div>
+    <div class="princ"><div class="num">02</div><h3>Jambes de natation</h3><p>Savoir courir vidé, juste après l'eau. C'est la signature du swimrun.</p></div>
+    <div class="princ"><div class="num">03</div><h3>Terrain & dénivelé</h3><p>Côtes en force, descentes relâchées. Le trail des Préalpes, pas la piste.</p></div>
+    <div class="princ"><div class="num">04</div><h3>Cadence & relâchement</h3><p>Petits pas rapides, buste droit, épaules basses. Moins de freinage.</p></div>
+    <div class="princ"><div class="num">05</div><h3>Enchaîner</h3><p>Transitions eau→course rapides, sans cassure de rythme.</p></div>
+  </div>
+</section>
+
+<section class="arc">
+  <h2>L'arc en 3 blocs</h2>
+  <p class="sub">On bâtit le moteur, puis la force du terrain, puis l'enchaînement spécifique.</p>
+  <div class="blocs">
+    <div class="bloc-row" style="--bc:#6fd6c9"><span class="wks">S1 – S2</span><span><span class="bt">Base aérobie</span><span class="bd">Réveiller la foulée, installer le volume facile, la cadence.</span></span></div>
+    <div class="bloc-row" style="--bc:#8fd0e8"><span class="wks">S3 – S4</span><span><span class="bt">Force & terrain</span><span class="bd">Côtes, dénivelé, descente technique.</span></span></div>
+    <div class="bloc-row" style="--bc:#f0b860"><span class="wks">S5 – S6</span><span><span class="bt">Spécifique swimrun</span><span class="bd">Courir vidé, brick eau-course, enchaînements.</span></span></div>
+  </div>
+</section>
+
+<nav class="weeknav" id="weeknav" aria-label="Choix de la semaine"></nav>
+<main class="panel" id="panel"></main>
+
+<section class="glossary">
+  <h2>Les repères</h2>
+  <p class="sub">Le vocabulaire des séances, en clair.</p>
+  <div id="eduList"></div>
+</section>
+
+<footer>
+  <p><b>Repères d'intensité.</b> Tout est piloté à la sensation (RPE) ou au cardio, jamais au chrono. En aisance tu dois pouvoir tenir une conversation ; si tu ne peux plus, ralentis ou marche. Ce n'est pas tricher, c'est la méthode.</p>
+  <br>
+  <p>Adapte les durées à ta forme et au créneau famille — une sortie facile tenue vaut mieux qu'une séance trop dure abandonnée. Garde au moins un jour entre deux séances intenses (côtes, tempo, brick).</p>
+</footer>
+
+<script>
+const blocColors={1:'#6fd6c9',2:'#8fd0e8',3:'#f0b860'};
+const blocNames={1:'Bloc 1 · Base aérobie',2:'Bloc 2 · Force & terrain',3:'Bloc 3 · Swimrun'};
+
+const weeks=[
+  {n:1,bloc:1,theme:"Réveiller la foulée",
+   focus:"Tout en aisance : tu dois pouvoir tenir une conversation en courant. Si tu es essoufflé, ralentis ou marche — sans culpabiliser.",
+   sessions:[
+    {tag:"Séance A",title:"Endurance fondamentale",cue:"Le nez doit presque suffire à respirer. Sinon, c'est trop vite.",
+     parts:[
+      {l:"Préparation",items:["<b>5 min</b> marche active + mobilité chevilles/hanches"]},
+      {l:"Corps",items:["<b>40 min</b> footing en aisance (zone facile), terrain plat ou roulant","Marche les côtes si le cardio s'emballe — c'est permis"]},
+      {l:"Fin",items:["<b>5 min</b> marche + étirements légers"]}
+    ]},
+    {tag:"Séance B",title:"Cadence",cue:"Des pas plus courts et plus rapides, pas plus grands.",
+     parts:[
+      {l:"Échauffement",items:["<b>10 min</b> footing souple"]},
+      {l:"Technique",items:["<b>6×30\"</b> en augmentant la fréquence de pas (petits pas vifs) · récup 90\" footing"]},
+      {l:"Corps",items:["<b>18 min</b> footing en aisance, garder la cadence travaillée"]},
+      {l:"Fin",items:["<b>5 min</b> marche"]}
+    ]}
+   ]},
+  {n:2,bloc:1,theme:"Installer le volume",
+   focus:"Un cran de durée au-dessus, toujours en aisance. Le volume facile, c'est le moteur qui se construit.",
+   sessions:[
+    {tag:"Séance A",title:"Sortie longue facile",cue:"Si tu te demandes si c'est trop lent, c'est probablement le bon rythme.",
+     parts:[
+      {l:"Préparation",items:["<b>5 min</b> marche + mobilité"]},
+      {l:"Corps",items:["<b>55–65 min</b> footing en aisance, légèrement vallonné","Eau dès que ça dépasse 1 h"]},
+      {l:"Fin",items:["<b>5 min</b> marche + étirements"]}
+    ]},
+    {tag:"Séance B",title:"Lignes droites",cue:"Les strides réveillent la vitesse sans fatiguer : relâché, jamais en force.",
+     parts:[
+      {l:"Échauffement",items:["<b>10 min</b> footing souple"]},
+      {l:"Corps",items:["<b>25 min</b> footing en aisance","<b>6×100 m</b> accélérations progressives et relâchées (strides) · récup marche/footing"]},
+      {l:"Fin",items:["<b>8 min</b> retour au calme"]}
+    ]}
+   ]},
+  {n:3,bloc:2,theme:"Côtes en force",
+   focus:"Pousser dans la pente, buste droit, foulée courte et active. La côte construit la force sans le traumatisme du plat rapide.",
+   sessions:[
+    {tag:"Séance A",title:"Côtes courtes",cue:"Pousse sur l'avant-pied, regarde devant toi, pas tes pieds.",
+     parts:[
+      {l:"Échauffement",items:["<b>15 min</b> footing progressif + montées de genoux"]},
+      {l:"Corps",items:["<b>8×45\"</b> en côte modérée, effort soutenu · récup descente en marchant"]},
+      {l:"Fin",items:["<b>10 min</b> retour au calme à plat"]}
+    ]},
+    {tag:"Séance B",title:"Trail facile",cue:"Le terrain irrégulier muscle les appuis : reste souple, regarde la trajectoire.",
+     parts:[
+      {l:"Corps",items:["<b>50 min</b> sur sentier en aisance, gérer appuis et terrain"]},
+      {l:"Fin",items:["<b>5 min</b> marche + mobilité chevilles"]}
+    ]},
+    {terrain:true,text:"Choisis une vraie pente des Préalpes, surface stable. La montée se court courte et tonique ; on récupère franchement en descendant tranquille."}
+   ]},
+  {n:4,bloc:2,theme:"Dénivelé & descente",
+   focus:"Monter régulier, descendre relâché. La descente est une compétence : on la travaille, on ne la subit pas.",
+   sessions:[
+    {tag:"Séance A",title:"Bosse longue",cue:"En montée, le souffle régulier prime sur la vitesse.",
+     parts:[
+      {l:"Préparation",items:["<b>10 min</b> footing d'approche"]},
+      {l:"Corps",items:["<b>65–75 min</b> avec une montée continue de <b>15–20 min</b> en tempo bas","Descente en soignant l'appui : petits pas, regard loin, bras qui équilibrent"]},
+      {l:"Fin",items:["<b>5 min</b> marche"]}
+    ]},
+    {tag:"Séance B",title:"Côtes longues",cue:"Deux minutes, c'est long : pars prudent, finis fort.",
+     parts:[
+      {l:"Échauffement",items:["<b>15 min</b> footing progressif"]},
+      {l:"Corps",items:["<b>5×2 min</b> en côte, effort soutenu · récup descente en footing"]},
+      {l:"Fin",items:["<b>10 min</b> retour au calme"]}
+    ]},
+    {terrain:true,text:"En descente, relâche : laisse-toi rouler, regarde 4–5 m devant, ne freine pas sur chaque appui. C'est ce qui sauve les cuisses sur un swimrun."}
+   ]},
+  {n:5,bloc:3,theme:"Courir vidé",
+   focus:"Courir tout de suite après nager. Les jambes sont en coton les premières minutes — l'objectif est de retrouver vite un rythme propre.",
+   sessions:[
+    {tag:"Séance A",title:"Brick eau → course",cue:"Ne lutte pas contre les jambes lourdes : cadence courte, ça revient en 5 minutes.",
+     parts:[
+      {l:"Enchaîné",items:["<b>Nage 12–15 min</b> en aisance","Transition la plus courte possible","<b>Course 25–30 min</b> en aisance à tempo bas"]},
+      {l:"Sans accès eau",items:["Remplace la nage par <b>5 min</b> vélo dur ou gainage intense, puis enchaîne la course"]},
+      {l:"Fin",items:["<b>5 min</b> marche"]}
+    ]},
+    {tag:"Séance B",title:"Tempo",cue:"Une allure que tu pourrais tenir ~1 h en course : soutenue mais maîtrisée.",
+     parts:[
+      {l:"Échauffement",items:["<b>15 min</b> footing progressif"]},
+      {l:"Corps",items:["<b>2×8 min</b> en tempo (allure soutenue tenable) · récup <b>3 min</b> footing"]},
+      {l:"Fin",items:["<b>10 min</b> retour au calme"]}
+    ]}
+   ]},
+  {n:6,bloc:3,theme:"Enchaînements & affûtage",
+   focus:"Alterner course et nage proprement. Transitions rapides, matériel testé, sensations avant le chrono.",
+   sessions:[
+    {tag:"Séance A",title:"Mini-swimrun",cue:"Sors de l'eau en courant : la transition se gagne dans la tête autant que dans les jambes.",
+     parts:[
+      {l:"Format",items:["<b>3 à 4 segments</b> de [ course 8–12 min + nage 5–10 min ]","En combi + chaussures, transitions les plus rapides possible"]},
+      {l:"Fin",items:["<b>10 min</b> retour au calme souple"]}
+    ]},
+    {tag:"Séance B",title:"Affûtage",cue:"Tout doit être facile : tu cherches la fraîcheur, pas la fatigue.",
+     parts:[
+      {l:"Corps",items:["<b>35–40 min</b> footing fluide en aisance","<b>4×20\"</b> accélérations légères et relâchées"]},
+      {l:"Fin",items:["<b>5 min</b> marche"]}
+    ]},
+    {terrain:true,text:"Répétition générale : teste tout le matos — combi qui sèche en courant, chaussures qui drainent, ce que tu portes entre les segments. Aucune surprise le jour J."}
+   ]}
+];
+
+const educatifs=[
+  {k:"Z",t:"Zones d'intensité",d:"Aisance = tu peux parler en phrases (≈ 70–75 % FC max), c'est la base et 80 % du temps total. Tempo = phrases courtes, soutenu mais tenable ≈ 1 h. Côtes = effort dur sur 45\" à 2 min. Inutile d'aller plus haut pour le swimrun."},
+  {k:"STR",t:"Strides (lignes droites)",d:"Accélérations progressives de 60–100 m, relâchées, sans jamais forcer ni sprinter. Elles réveillent la vitesse et la coordination sans laisser de fatigue. À placer en fin de footing facile."},
+  {k:"CÔT",t:"Côtes",d:"Répétitions en montée : la force spécifique de course sans l'impact du plat rapide. Buste droit, foulée courte, on pousse sur l'avant-pied, regard devant. La récup se fait en redescendant."},
+  {k:"BRK",t:"Brick",d:"Enchaîner deux disciplines sans transition (ici nage → course). Habitue le corps au passage horizontal → vertical et aux jambes « vidées ». Les premières minutes sont dures : cadence courte, le rythme revient."},
+  {k:"DES",t:"Descente technique",d:"Courir en descente relâché : petits pas rapides, regard 4–5 m devant, bras un peu écartés pour l'équilibre, sans freiner sur chaque appui. C'est ce qui préserve les quadriceps sur la durée."},
+  {k:"CAD",t:"Cadence",d:"Nombre de pas par minute, à viser autour de 170–180. Des pas plus courts et plus fréquents réduisent le freinage à chaque foulée et les chocs articulaires — précieux quand les jambes sont fatiguées."}
+];
+
+let openSession={};let doneState={};
+const nav=document.getElementById('weeknav'),panel=document.getElementById('panel');
+
+weeks.forEach((w,i)=>{
+  const b=document.createElement('button');
+  b.className='wchip'+(i===0?' active':'');
+  b.dataset.bloc=w.bloc;
+  b.innerHTML=`<span class="dot" style="background:${blocColors[w.bloc]}"></span>S${w.n}`;
+  b.setAttribute('aria-label',`Semaine ${w.n} — ${w.theme}`);
+  b.onclick=()=>{document.querySelectorAll('.wchip').forEach(c=>c.classList.remove('active'));b.classList.add('active');renderWeek(i);b.scrollIntoView({behavior:'smooth',block:'nearest',inline:'center'});};
+  nav.appendChild(b);
+});
+
+function renderWeek(i){
+  const w=weeks[i],col=blocColors[w.bloc];
+  let html=`<div class="wk-head"><span class="big" style="--bcur:${col}">S${w.n}</span><span class="theme">${w.theme}</span></div>
+    <div class="wk-bloc">${blocNames[w.bloc]}</div>
+    <div class="focus"><div class="lab">Focus de la semaine</div><p>${w.focus}</p></div>`;
+  let sIndex=0;
+  w.sessions.forEach((s)=>{
+    if(s.terrain){
+      html+=`<div class="lac"><div class="lab"><svg viewBox="0 0 24 24" fill="none" stroke="${col}" stroke-width="2" stroke-linejoin="round"><path d="M3 18l5-8 4 5 3-4 6 7z"/></svg>Terrain</div><p>${s.text}</p></div>`;
+      return;
+    }
+    const key=`${i}-${sIndex}`,isOpen=openSession[i]===sIndex,isDone=doneState[key];
+    let parts='';
+    s.parts.forEach(p=>{parts+=`<div class="part"><div class="plab">${p.l}</div><ul>${p.items.map(it=>`<li>${it}</li>`).join('')}</ul></div>`;});
+    html+=`<div class="session${isOpen?' open':''}${isDone?' done':''}" data-week="${i}" data-ses="${sIndex}">
+      <div class="ses-head">
+        <span class="check" role="checkbox" aria-checked="${isDone?'true':'false'}" tabindex="0" aria-label="Marquer comme fait"><svg viewBox="0 0 24 24" fill="none" stroke="#08252e" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12l5 5L20 6"/></svg></span>
+        <div class="tag">${s.tag}</div><div class="title">${s.title}</div>
+        <span class="chev"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 9l6 6 6-6"/></svg></span>
+      </div>
+      <div class="ses-body"><div class="ses-inner"><div class="cue">${s.cue}</div>${parts}</div></div>
+    </div>`;
+    sIndex++;
+  });
+  panel.innerHTML=html;
+  panel.querySelectorAll('.session').forEach(sec=>{
+    const wi=+sec.dataset.week,si=+sec.dataset.ses,key=`${wi}-${si}`;
+    sec.querySelector('.ses-head').addEventListener('click',(e)=>{if(e.target.closest('.check'))return;openSession[wi]=(openSession[wi]===si)?-1:si;sec.classList.toggle('open');});
+    const chk=sec.querySelector('.check');
+    const toggle=(e)=>{e.stopPropagation();doneState[key]=!doneState[key];sec.classList.toggle('done');chk.setAttribute('aria-checked',doneState[key]?'true':'false');};
+    chk.addEventListener('click',toggle);
+    chk.addEventListener('keydown',(e)=>{if(e.key===' '||e.key==='Enter'){e.preventDefault();toggle(e);}});
+  });
+}
+renderWeek(0);
+
+const el=document.getElementById('eduList');
+educatifs.forEach(e=>{const d=document.createElement('details');d.className='edu';d.innerHTML=`<summary><span class="ec">${e.k}</span>${e.t}<span class="plus">+</span></summary><div class="edu-d">${e.d}</div>`;el.appendChild(d);});
+
+if('serviceWorker' in navigator){window.addEventListener('load',()=>navigator.serviceWorker.register('./sw.js').catch(()=>{}));}
+</script>
+<div class="ibar" id="ibar" role="dialog" aria-label="Installer swimrun">
+  <img src="./favicon.svg" alt="">
+  <div class="it"><b>Installer swimrun</b><span>Accès rapide et hors-ligne depuis ton écran d'accueil</span></div>
+  <button class="go" id="ibarGo">Installer</button>
+  <button class="x" id="ibarX" aria-label="Fermer">&times;</button>
+</div>
+<script>
+(function(){
+  var bar=document.getElementById('ibar'),go=document.getElementById('ibarGo'),x=document.getElementById('ibarX');
+  if(!bar)return;
+  var deferred=null,dismissed=false;
+  var standalone=window.matchMedia('(display-mode: standalone)').matches||window.navigator.standalone;
+  window.addEventListener('beforeinstallprompt',function(e){e.preventDefault();deferred=e;if(!standalone&&!dismissed)bar.classList.add('show');});
+  go.addEventListener('click',async function(){if(!deferred)return;deferred.prompt();await deferred.userChoice;deferred=null;bar.classList.remove('show');});
+  x.addEventListener('click',function(){dismissed=true;bar.classList.remove('show');});
+  window.addEventListener('appinstalled',function(){bar.classList.remove('show');});
+})();
+</script>
+</body>
+</html>
